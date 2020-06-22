@@ -3,13 +3,13 @@ $(function(){
 	var mainPage = "/SecMobile/?page=main";
 	if (typeof(args.page) == "undefined" || args.page == null) {
 		window.location.href = mainPage;
-	} else if (args.page === "403") {
+	} else if (args.page == "403") {
 		$(document).attr("title", "拒绝访问 - SecMobile");
 		var errorMsg = '<br/><div class="alert alert-danger" role="alert">温馨提示：很抱歉，您没有访问此页面的权限，请联系系统管理员或<a href="'+mainPage+'">返回首页</a></div>'
 		$("#main").html(errorMsg);
 	} else {
 		$("#main").load("/SecMobile/pages/"+args.page+".html", function(response, status, xhr) {
-			if (status === "success") {
+			if (status == "success") {
 				$(document).attr("title",$("#main_title").html() + " - SecMobile");
 				$("#"+args.page+"_nav").addClass("active");
 			} else {
@@ -18,9 +18,9 @@ $(function(){
 				$("#main").html(errorMsg);
 			}
 		});
-		if (args.page === "android-dym") {
+		if (args.page == "android-dym") {
 			onRefreshDeviceList();
-		} else if (args.page === "history") {
+		} else if (args.page == "history") {
 			onRefreshHistoryList();
 		}
 	}
@@ -37,6 +37,43 @@ function getArgs(){
     return args;
 }
 
+function onFwAnalysis() {
+	var formData = new FormData(document.getElementById("uploadForm"));
+//	显示加载模态框
+	$("#loadingModel").modal("show");
+	$.ajax({
+	      type:"POST",
+	      url:"/SecMobile/fw/analysis",
+	      data:formData,
+	      mimeType:"multipart/form-data",
+	      contentType: false,
+	      cache: false,
+	      processData: false,
+	      success: function (result) {
+//	    	    隐藏加载模态框
+	    	 $("#loadingModel").modal("hide");
+	    	 var result=JSON.parse(result);
+	     	 if(result.status == 0) {
+	     		showFwAnalysis(result);
+//	     		填充并显示结果提示模态框
+	     		$("#resultModalBody").html("针对 "+result.fw_info.fw_name+" 的分析完成", function() {});
+	     		$("#resultModal").modal("show");
+	     	 } else {
+//	     		 填充并显示结果提示模态框，提示错误
+	     		$("#resultModalBody").html(result.reason);
+	     		$("#resultModal").modal("show");
+	     	 }
+	      },
+	      error: function(error){
+//	    	     隐藏加载模态框
+		    	$("#loadingModel").modal("hide");
+//	     		 填充并显示结果提示模态框，提示错误
+	     		$("#resultModalBody").html(error);
+	     		$("#resultModal").modal("show");
+	      }
+	});
+}
+
 function onApkAnalysis() {
 	var formData = new FormData(document.getElementById("uploadForm"));
 	$.ajax({
@@ -50,7 +87,7 @@ function onApkAnalysis() {
 	      success: function (result) {
 	    	 $("#loadingModel").modal("hide");
 	    	 var result=JSON.parse(result);
-	     	 if(result.status === 0) {
+	     	 if(result.status == 0) {
 	     		showApkAnalysis(result);
 	     		$("#resultModalBody").html("针对 "+result.apk_info.apk_name+" 的分析完成", function() {});
 	     		$("#resultModal").modal("show");
@@ -188,9 +225,9 @@ function onRefreshDeviceList() {
 			$("#deviceBody").html(devices);
 			if (result.devices.length == 0) {
 				$("#resultModalBody").html("未发现在线的测试设备，请您检查测试设备状态。<br/><br/>" +
-						"1. 是否已在测试设备上安装SecIoT Agent应用？<br/>" +
-						"2. SecIoT Agent模块是否已经安装（需要取得测试设备的root权限）？<br/>" +
-						"3. SecIoT Agent模块是否已经开启？（需要取得测试设备的root权限）<br/>" +
+						"1. 是否已在测试设备上安装SecMobile Agent应用？<br/>" +
+						"2. SecMobile Agent模块是否已经安装（需要取得测试设备的root权限）？<br/>" +
+						"3. SecMobile Agent模块是否已经开启？（需要取得测试设备的root权限）<br/>" +
 						"4. 检查测试设备的网络连接是否正常？<br/>" +
 						"5. 检查frps控制台是否存在测试设备连接？");
 	     		$("#resultModal").modal("show");
@@ -226,7 +263,7 @@ function getProcessList(client_id, port) {
 			$("#resultModalBody").html(result.reason + "<br/><br/>" +
 					"1. 检查测试设备的网络连接是否正常？<br/>" +
 					"2. 检查frps控制台是否存在测试设备连接？<br/>" +
-					"3. 请尝试重新启动SecIoT Agent模块再试<br/>" +
+					"3. 请尝试重新启动SecMobile Agent模块再试<br/>" +
 					"4. 请尝试重新启动设备再试");
      		$("#resultModal").modal("show");
 		}
@@ -278,7 +315,7 @@ function monitoringDevice() {
 			$("#resultModalBody").html(result.reason + "<br/><br/>" +
 					"1. 检查测试设备的网络连接是否正常？<br/>" +
 					"2. 检查frps控制台是否存在测试设备连接？<br/>" +
-					"3. 请尝试重新启动SecIoT Agent模块再试<br/>" +
+					"3. 请尝试重新启动SecMobile Agent模块再试<br/>" +
 					"4. 请尝试重新启动设备再试<br/>" +
 					"5. 如果在启动检测的过程中，被检测应用始终提示“已停止运行”，那么可能是Frida对您设备的Android版本未兼容，请尝试更换设备再试。");
 			$("#resultModal").modal("show");
@@ -331,9 +368,7 @@ function onRefreshHistoryList() {
 				historyBody += '<td>'+result.history_list[i].target+'</td>';
 				historyBody += '<td>';
 				var type = result.history_list[i].type;
-				if (type == "firmware-static") {
-					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#firmwareStaticResultModal" onclick="onShowFwStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
-				} else if (type == "android-static") {
+				if (type == "android-static") {
 					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#androidStaticResultModal" onclick="onShowAndroidStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
 				} else if (type == "ios-static") {
 					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#iosStaticResultModal" onclick="onShowiOSStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
@@ -375,9 +410,7 @@ function onRefreshHistoryListByType(type) {
 				historyBody += '<td>'+result.history_list[i].target+'</td>';
 				historyBody += '<td>';
 				var type = result.history_list[i].type;
-				if (type == "firmware-static") {
-					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#firmwareStaticResultModal" onclick="onShowFwStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
-				} else if (type == "android-static") {
+				if (type == "android-static") {
 					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#androidStaticResultModal" onclick="onShowAndroidStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
 				} else if (type == "ios-static") {
 					historyBody += '<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#iosStaticResultModal" onclick="onShowiOSStaticHistory(\''+result.history_list[i].detailid+'\')">查看报告</button>';
@@ -393,19 +426,6 @@ function onRefreshHistoryListByType(type) {
 	     		$("#resultModal").modal("show");
 	     		return;
 			}
-		} else {
-			$("#resultModalBody").html(result.reason);
-     		$("#resultModal").modal("show");
-		}
-	});
-}
-
-function onShowFwStaticHistory(id) {
-	$.get("/SecMobile/history/getFwHistoryById", {
-		id: id
-	}, function(result) {
-		if(result.status == 0) {
-			showFwAnalysis(result);
 		} else {
 			$("#resultModalBody").html(result.reason);
      		$("#resultModal").modal("show");

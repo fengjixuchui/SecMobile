@@ -27,6 +27,15 @@
             </a>
           </li>
         </ul>
+        <ul class="nav flex-column mb-2">
+         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+         	<span>系统安全</span>
+         </h6>
+         <li class="nav-item">
+            <a id="firmware_nav" class="nav-link" href="/SecMobile/?page=firmware">
+              系统固件静态分析
+            </a>
+         </li>
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
             <span>安卓应用安全</span>
           </h6>
@@ -56,6 +65,16 @@
               安全检测历史
             </a>
           </li>
+         <!-- <li class="nav-item">
+            <a id="cve_nav" class="nav-link" href="/SecMobile/?page=cve">
+              第三方库漏洞查询
+            </a>
+          </li> -->
+          <li class="nav-item">
+            <a id="frp_nav" class="nav-link" href="http://localhost:8083/">
+              frps控制台
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -67,7 +86,7 @@
 		<span class="text-muted">
 			Copyright &copy; 2019 SecMobile Contributors.
 			<a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">自由软件许可</a> , 
-			<a href="https://github.com/wrlu/SecMobile">贡献源代码</a>
+			<a href="https://gitlab.com/wrlu/SecMobile-server">贡献源代码</a>
 		</span>
 	</div>
 </footer>
@@ -97,7 +116,7 @@
       <div class="modal-header">
         <h5 class="modal-title">提示</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true"></span>
+          <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div id="resultModalBody" class="modal-body"></div>

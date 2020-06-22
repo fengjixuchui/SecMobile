@@ -152,7 +152,9 @@ public class HistoryController {
 		try {
 			HistoryDao history = historyService.getHistoryById(id).get(0);
 			String type = history.getType();
-			if (type.equals("android-static")) {
+			if (type.equals("firmware-static")) {
+				historyService.deleteFwHistory(history.getDetailid());
+			} else if (type.equals("android-static")) {
 				historyService.deleteAndroidHistory(history.getDetailid());
 			} else if (type.equals("ios-static")) {
 				historyService.deleteAppleiOSHistory(history.getDetailid());

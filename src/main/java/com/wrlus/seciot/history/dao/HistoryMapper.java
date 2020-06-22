@@ -35,6 +35,8 @@ public interface HistoryMapper {
 	public int updateHistoryName(@Param("id") String id, @Param("name") String name);
 	@Delete("delete from history where id = #{id};")
 	public int deleteHistory(@Param("id") String id);
+	@Delete("delete from history_fw_static where id = #{id};")
+	public int deleteFwHistory(@Param("id") String id);
 	@Delete("delete from history_android_static where id = #{id};")
 	public int deleteAndroidHistory(@Param("id") String id);
 	@Delete("delete from history_ios_static where id = #{id};")

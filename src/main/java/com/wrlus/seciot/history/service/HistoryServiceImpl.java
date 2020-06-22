@@ -68,6 +68,11 @@ public class HistoryServiceImpl implements HistoryService {
 	}
 
 	@Override
+	public int deleteFwHistory(String id) {
+		return dao.deleteFwHistory(id);
+	}
+
+	@Override
 	public int deleteAndroidHistory(String id) {
 		return dao.deleteAndroidHistory(id);
 	}

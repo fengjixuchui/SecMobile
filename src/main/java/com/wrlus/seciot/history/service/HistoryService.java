@@ -17,6 +17,7 @@ public interface HistoryService {
 	public int addAppleiOSHistory(AppleiOSHistoryDao appleiOSHistory);
 	public int updateHistoryName(String id, String name);
 	public int deleteHistory(String id);
+	public int deleteFwHistory(String id);
 	public int deleteAndroidHistory(String id);
 	public int deleteAppleiOSHistory(String id);
 }
